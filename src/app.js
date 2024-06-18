@@ -41,6 +41,12 @@ app.put("/livros/:id", (req, res) => {
      .json(livros);
 })
 
+app.delete("/livros/:id", (req, res) => {
+    const index = buscaLivro(req.params.id);
+    livros.splice(index, 1);
+    res.status(200).json(livros);
+});
+
 app.post("/livros", (req, res) => {
     livros.push(req.body);
     res.status(201).send("Livro cadastrado com sucesso!");
