@@ -1,7 +1,6 @@
 import express from "express";
 import conectaNoDatabase from "./config/dbConnect.js";
-import livro from "./models/Livro.js";
-import LivroController from "./controllers/livroController.js";
+import routes from "./routes/index.js"
 
 const conexao = await conectaNoDatabase();
 
@@ -14,8 +13,7 @@ conexao.once("open", () => {
 })
 
 const app = express();
-app.use(express.json());
-
+routes(app);
 
 app.get("/", (req,res) => {
     res.status(200).send("Curso de Node.js")
@@ -38,11 +36,6 @@ app.delete("/livros/:id", (req, res) => {
     const index = buscaLivro(req.params.id);
     livros.splice(index, 1);
     res.status(200).json(livros);
-});
-
-app.post("/livros", (req, res) => {
-    livros.push(req.body);
-    res.status(201).send("Livro cadastrado com sucesso!");
 });
 
 export default app;
