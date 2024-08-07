@@ -1,11 +1,11 @@
-import livro from "../models/Livro.js";
+import {livros} from "../models/index.js";
 import NaoEncontrado from "../erros/NaoEcontrado.js";
 
 class LivroController {
 
   static listarLivros = async (req, res, next) => {
     try {
-      const livrosResultado = await livro.find()
+      const livrosResultado = await livros.find()
         .populate("autor")
         .exec();
     
@@ -19,7 +19,7 @@ class LivroController {
     try {
       const id = req.params.id;
 
-      const livroResultados = await livro.findById(id)
+      const livroResultados = await livros.findById(id)
         .populate("autor", "nome")
         .exec();
 
@@ -38,7 +38,7 @@ class LivroController {
     try {
       const id = req.params.id;
 
-      const livroResultados = await livro.findByIdAndUpdate(id, {$set: req.body});
+      const livroResultados = await livros.findByIdAndUpdate(id, {$set: req.body});
       
       if (livroResultados !== null) {
         res.status(200).send({message: "Livro atualizado com sucesso"});
@@ -55,7 +55,7 @@ class LivroController {
     try {
       const id = req.params.id;
 
-      const livroResultados = await livro.findByIdAndDelete(id);
+      const livroResultados = await livros.findByIdAndDelete(id);
 
       if (livroResultados !== null) {
         res.status(200).send({message: "Livro removido com sucesso"});
@@ -70,7 +70,7 @@ class LivroController {
 
   static cadastrarLivro = async (req, res, next) => {
     try {
-      let livroRecebido = new livro(req.body);
+      let livroRecebido = new livros(req.body);
 
       const livroResultado = await livroRecebido.save();
 
@@ -84,7 +84,7 @@ class LivroController {
     try {
       const editora = req.query.editora;
 
-      const livrosResultado = await livro.find({"editora": editora});
+      const livrosResultado = await livros.find({"editora": editora});
       
       if (livrosResultado !== null) {
         res.status(200).send(livrosResultado);
