@@ -70,9 +70,9 @@ class LivroController {
 
   static cadastrarLivro = async (req, res, next) => {
     try {
-      let livro = new livro(req.body);
+      let livroRecebido = new livro(req.body);
 
-      const livroResultado = await livro.save();
+      const livroResultado = await livroRecebido.save();
 
       res.status(201).send(livroResultado.toJSON());
     } catch (erro) {
