@@ -1,25 +1,12 @@
 import {autores, livros} from "../models/index.js";
 import NaoEncontrado from "../erros/NaoEcontrado.js";
-import RequisicaoIncorreta from "../erros/RequisicaoIncorreta.js";
 class LivroController {
 
   static listarLivros = async (req, res, next) => {
     try {
-      let {limite = 5, pagina = 1} = req.query;
-      limite = parseInt(limite);
-      pagina = parseInt(pagina);
-
-      if (limite > 0 && pagina > 0) {
-        const livrosResultado = await livros.find()
-          .skip((pagina - 1) * limite)
-          .limit(limite)
-          .populate("autor")
-          .exec();
-      
-        res.status(200).json(livrosResultado);
-      } else {
-        next(new RequisicaoIncorreta); 
-      }
+      const buscaLivros = livros.find();
+      req.resultado = buscaLivros;
+      next();
     } catch (erro) {
       next(erro);
     }
@@ -92,25 +79,16 @@ class LivroController {
 
   static listarLivroPorFiltro = async (req, res, next) => {
     try {
-      let {limite = 5, pagina = 1} = req.query;
-      limite = parseInt(limite);
-      pagina = parseInt(pagina);
-
       const busca = await processaBusca(req.query);
-      if (limite <= 0 || pagina <= 0) { 
-        next(new RequisicaoIncorreta);
-      } else {
-        if (busca) {
-          const livrosResultado = await livros
-            .find(busca)
-            .skip((pagina - 1) * limite)
-            .limit(limite)
-            .populate("autor");
-          
-          res.status(200).send(livrosResultado);
-        } else{
-          res.status(200).send([]);  
-        }
+
+      if (busca) {
+        const livrosResultado = livros
+          .find(busca)
+          .populate("autor");
+        req.resultado = livrosResultado;
+        next();
+      } else{
+        res.status(200).send([]);  
       }
     } catch (erro) {
       next(erro);
@@ -124,7 +102,7 @@ async function processaBusca(parametros){
   const { editora, titulo, minPaginas, maxPaginas, nomeAutor} = parametros;
   let busca = {};
 
-  if (editora) busca.editora = {$regex: titulo, $options: "i"};
+  if (editora) busca.editora = {$regex: editora, $options: "i"};
   if (titulo) busca.titulo = {$regex: titulo, $options: "i"};
   if (minPaginas || maxPaginas) busca.paginas = {};
 
