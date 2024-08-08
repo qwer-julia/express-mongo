@@ -206,7 +206,7 @@ maxPaginas (opcional): Filtra os livros pela quantidade máxima de páginas.
 
 ##### Exemplo de requisição
 ```
-GET /livros?page=2&limit=5&editora=Classicos
+GET /livros/busca?page=2&limit=5&editora=Classicos
 ```
 
 Resposta:
